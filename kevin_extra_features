@@ -1,6 +1,10 @@
 # KEVIN CHANG, kc3192
 # PYTHON SOURCE CODE FOR FEATURES "ADD COMMENT" AND "ADD FRIENDGROUP"
 
+# need new link in home.html for friendGroup page
+<li><a href="/friendGroup"> Create FriendGroup </a></li>
+# 
+
 @app.route("/comment", methods=["POST"])
 @login_required
 def comment():
@@ -79,7 +83,7 @@ def addFriendGroup():
 				<input type="submit" value="Submit"/>
 			</form>
 		</div>
-        <a href="/">Go back</a>
+        <a href="/">Back</a>
     </body>
 </html>
     
