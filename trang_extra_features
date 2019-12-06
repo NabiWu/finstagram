@@ -1,0 +1,237 @@
+# groups.html"
+<html>
+    <head>
+        <title> New FriendGroup </title>
+    </head>
+    <body>
+        <h1 class="title"> Create a Close Friends Group! </h1>
+        <div>
+            <h3> Create a New Group </h3>
+            <form action="/createFriendGroup" method="post">
+                <input type="text" name="groupName" placeholder="Group Name" required/><br/>
+                <input type="text" name="description" placeholder="Description"/><br/>
+                <input type="submit" value="Create">
+            </form><br/>
+            <h3> Add a Member to a Group </h3>
+            <form action="/addMember" method="post">
+                <input type="text" name="groupName" placeholder="Group Name" required/><br/>
+                <input type="text" name="member_username" placeholder="Username" required/><br/>
+                <input type="submit" value="Add to Group">
+            </form><br/>
+            <h3> List of User's Owned Groups </h3>
+            <ul>
+                {% for group in groups %}
+                <li>
+                    {{group.groupName}}
+                    <ul>
+                        {% for user in users %}
+                        {% if user.groupName == group.groupName %}
+                            <li> {{ user.member_username }} </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% if error %}
+            {{ error }}
+        {% endif %}<br/>
+        <a href="/">Go Back</a>
+    </body>
+</html>
+
+# Showing the close friend groups of a user
+@app.route("/groups", methods=["GET"])
+@login_required
+def groupsManage():
+    groupOwner = session["username"]
+    # Queries that check the close friend groups the user owns or belongs to
+    query1 = "SELECT * FROM friendgroup WHERE groupOwner=%s"
+    query2 = "SELECT * FROM belongto WHERE owner_username=%s"
+
+    with connection.cursor() as cursor1:
+        cursor1.execute(query1, (groupOwner))
+    with connection.cursor() as cursor2:
+        cursor2.execute(query2, (groupOwner))
+    data1 = cursor1.fetchall()
+    data2 = cursor2.fetchall()
+    print(data2)
+    return render_template("groups.html", groups=data1, users=data2, username=session["username"])
+
+# Creating a new close friend group
+@app.route("/createGroup", methods=["POST"])
+@login_required
+def createFriendGroup():
+    if request.form:
+        requestData = request.form
+        groupName = requestData["groupName"]
+        description = requestData["description"]
+        groupOwner = session["username"]
+        try:
+            # Query used to create a new close friend group
+            query = "INSERT INTO friendgroup (groupOwner, groupName, description) VALUES (%s, %s, %s)"
+            with connection.cursor() as cursor:
+                cursor.execute(query, (groupOwner, groupName, description))
+            message = "CloseFriendGroup has been successfully created."
+        except:
+            message = groupName + " already exists."
+        return render_template("groups.html", message=message, username=session["username"])
+    else:
+        message = "Failed to create CloseFriendGroup."
+        return render_template("groups.html", message=message, username=session["username"])
+
+# Adding a new member to a close friend group
+@app.route("/addMember", methods=["POST"])
+@login_required
+def addMember():
+    if request.form:
+        requestData = request.form
+        groupName = requestData["groupName"]
+        newMember = requestData["member_username"]
+        ownerName = session["username"]
+        try:
+            # Query for adding a new member to a close friend group
+            query = "INSERT INTO belongto (groupName, owner_username, member_username) VALUES (%s, %s, %s)"
+            with connection.cursor() as cursor:
+                cursor.execute(query, (groupName, ownerName, newMember))
+            message = newMember + " has successfully been added to " + groupName
+        except:
+            message = "User is already in this closeFriendGroup..."
+        return render_template("groups.html", message=message, username=session["username"])
+    else:
+        message = "Failed to add " + newMember + " to " + groupName
+        return render_template("groups.html", message=message, username=session["username"])
+
+# tags.html
+<html>
+    <head>
+        <title>Manage Tags</title>
+    </head>
+    <body>
+        <h1 class="title"> Tag Requests </h1>
+        <div>
+            Here are users who have requested to tag you in a photo:
+            <table>
+                <th>Username</th>
+                {% for req in tagQuery %}
+            <tr>
+                {% if username == req.username %}
+                <td>{{req.photoID}}</td>
+                {% endif %}
+            <tr>
+                {% endfor %}
+            </table>
+
+            <form action="/acceptTagRequest" method="POST">
+                <br>
+                <input type="text" name="photoID" placeholder="Enter photoID of tagged photo" required/>
+                <input type="submit" role="button" value="Accept Request"/>
+                <br>
+            </form>
+            
+            <form action="/declineTagRequest" method="POST">
+                <br>
+                <input type="text" name="photoID" placeholder="Enter photoID of tagged photo" required/>
+                <input type="submit" role="button" value="Decline Request"/>
+                <br>
+            </form>
+
+            Using the form below, you may tag someone in a photo!
+            <br>
+            <form action="/tagUser" method="POST">
+                <input type="text" name="photoID" placeholder="Enter photoID of photo being tagged" required/>
+                <input type="text" name="taggedUsername" placeholder="Enter username of person being tagged" required/>
+                <input type="submit" role="button" value="Tag User"/>
+            </form>
+        </div>
+        {% if message %}
+            {{ message }}
+        {% endif %}
+        <br/>
+        <a href="/">Go back</a>
+    </body>
+</html>
+
+# Accept tag requests
+@app.route('/acceptTagRequest', methods=["POST"])
+def acceptTagRequest():
+    username = session['username']
+    photoID = request.form['photoID']
+    query = 'UPDATE tagged SET tagstatus = 1 WHERE username = %s AND photoID = %s'
+    cursor = connection.cursor()
+    cursor.execute(query, (username, photoID))
+    cursor.close()
+    return render_template('tags.html')
+
+# Decline tag requests
+@app.route('/declineTagRequest', methods=["POST"])
+def declineTagRequest():
+    username = session['username']
+    photoID = request.form['photoID']
+    query = 'DELETE FROM tagged WHERE username = %s AND photoID = %s'
+    cursor = connection.cursor()
+    cursor.execute(query, (username, photoID))
+    cursor.close()
+    return render_template('tags.html')
+
+# Manage tag requests
+@app.route('/manageTags', methods=["GET"])
+def manageTags():
+    username = session['username']
+    query = 'SELECT photo.photoPoster, photo.postingdate, photo.filepath, photo.caption FROM tagged JOIN photo ON ' \
+               '(tagged.photoID = photo.photoID) WHERE tagged.username = %s AND tag.tagstatus = 0'
+    cursor = connection.cursor()
+    cursor.execute(query, username)
+    data = cursor.fetchall()
+    cursor.close()
+    return render_template('tags.html', username=username, tags=data)
+
+# images.html
+<html>
+    <head>
+        <title>Finstagram</title>
+    </head>
+    <body>
+        <h1>Image Gallery</h1>
+        <div>
+            {% for image in images %}
+                <img src="/image/{{image.filePath}}" width="300"/>
+
+                <form action="/like" method="post">
+                    <button type="submit" name="likeID" value="{{image.photoID}}">Like</button>
+                </form>
+
+                <h4>Liked By</h4>
+                    <ul>
+                        {% for liker in likes %}
+                            {% if liker.photoID == image.photoID %}
+                                <li> {{liker.username}} </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+
+                <h4>Tagged Users</h4>
+                        <ul>
+                            {% for taggedImage in taggedUsers %}
+                                {% if taggedImage.photoID == image.photoID %}
+                                    {% if taggedImage.acceptedTag %}
+                                        <li> {{taggedImage.fname}} {{taggedImage.lname}}  </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+
+                            <h5> Tag a User: </h5>
+                            <form action="/tagAUser" method="post" enctype="multipart/form-data">
+                            <input type="text" name="tagUser{{image.photoID}}" />
+                            <input type="submit" value="Tag">
+                            </form>
+                        </ul>
+            {% endfor %}
+        </div>
+        {% if message %}
+            {{ message }}
+        {% endif %}
+        <a href="/">Go back</a>
+    </body>
+</html>
