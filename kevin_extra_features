@@ -1,0 +1,116 @@
+# KEVIN CHANG, kc3192
+# PYTHON SOURCE CODE FOR FEATURES "ADD COMMENT" AND "ADD FRIENDGROUP"
+
+@app.route("/comment", methods=["POST"])
+@login_required
+def comment():
+    # user should input photoID
+    photoID = request.form["photoID"]
+    # get comment string
+    commentStr = request.form["commentStr"]
+    username = session["username"]
+
+    # cursor to interact with database
+    cursor = connection.cursor()
+
+    query = "INSERT INTO comment(commentStr, ts, photoID, username) VALUES (%s, %s, %s, %s)"
+    cursor.execute(query, (commentStr, time.strftime('%Y-%m-%d %H:%M:%S'), photoID, username))
+    connection.commit()
+    cursor.close()
+    error = "An unknown error occurred. Please try again."
+    return render_template("home.html", error=error)
+
+
+@app.route("/friendGroup", methods=["GET"])
+@login_required
+def friendGroup():
+    return render_template("/friendGroup.html")
+
+
+@app.route("/addFriendGroup", methods=["POST"])
+@login_required
+def addFriendGroup():
+    # get new friendgroup name and description
+    groupName = request.form["groupName"]
+    description = request.form["description"]
+    groupOwner = session["username"]
+
+    try:
+        with connection.cursor() as cursor:
+            query = "INSERT INTO friendgroup(groupOwner, groupName, description) VALUES (%s, %s, %s)"
+            cursor.execute(query, (groupOwner, groupName, description))
+            connection.commit()
+    except pymysql.err.IntegrityError:
+        error = groupName + " already exists."
+        return render_template("friendGroup.html", error=error)
+
+    error = "An unknown error has occurred. Please try again."
+    return render_template("friendGroup.html", error=error)
+    
+# HTML CODE (modified images.html, new html page friendGroup.html)
+# images.html
+<html>
+    <head>
+        <title>Finstagram</title>
+    </head>
+    <body>
+        <h1>Image Gallery</h1>
+        <div>
+            {% for image in images %}
+				<img src="/image/{{image.filePath}}" width="300"/>
+				<h3> {{image.photoID}} </h3>
+				{% for comment in comments %}
+					{% if comment.photoID == image.photoID %}
+						<div>
+							<p> {{comment.commentStr}} </p>
+						</div>
+					{% endif %}
+				{% endfor %}
+            {% endfor %}
+        </div>
+		<h1> Add a Comment </h1>
+		<div>
+			<form action="/comment" method="post">
+				<h4> Enter the photo ID of the photo you'd like to comment on! </h4>
+				<input type="text" name="photoID" placeholder="Photo ID" required/>
+				<br/>
+				<input type="text" name="commentStr" placeholder="Comment" required/>
+				<br/>
+				<input type="submit" value="Submit"/>
+			</form>
+		</div>
+        <a href="/">Go back</a>
+    </body>
+</html>
+    
+# friendGroup.html
+<html>
+	<head><title> New FriendGroup </title></head>
+	<h1> Create a new FriendGroup! </h1>
+	<body>
+		<div>
+		<form action="/addFriendGroup" method="post">
+						<input type="text" name="groupName" placeholder="Group Name" required/>
+						<br/>
+						<input type="text" name="description" placeholder="Description"/>
+						<br/>
+						<input type="submit" value="Submit"/>
+		</form>
+		</div>
+		<br/>
+		<a href="/home"> Back </a>
+	</body>
+</html>
+
+
+# DB TABLE MODIFICATIONS FOR COMMENTS
+CREATE TABLE comment (
+    commentID INT AUTO_INCREMENT PRIMARY KEY,
+    commentStr VARCHAR(500),
+    ts DATETIME,
+    photoID INT,
+    username VARCHAR(20),
+    poster VARCHAR(20),
+    FOREIGN KEY (photoID) references photo(photoID),
+    FOREIGN KEY (username) references person(username));
+    
