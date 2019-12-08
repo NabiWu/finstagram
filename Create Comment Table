@@ -1,0 +1,12 @@
+
+# DB TABLE MODIFICATIONS FOR COMMENTS
+CREATE TABLE comment (
+    commentID INT AUTO_INCREMENT PRIMARY KEY,
+    commentStr VARCHAR(500),
+    ts DATETIME,
+    photoID INT,
+    username VARCHAR(20),
+    poster VARCHAR(20),
+    FOREIGN KEY (photoID) references photo(photoID),
+    FOREIGN KEY (username) references person(username));
+    
