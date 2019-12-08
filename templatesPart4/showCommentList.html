@@ -1,0 +1,39 @@
+<html>
+<head>
+</head>
+<body>
+
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+
+
+
+
+
+{% for line in comment %}
+	{{line.commentStr}}
+    <br>
+{% endfor %}
+
+<input type="submit" value="tag">
+
+
+
+
+<br>
+<br>
+<a href="/readComment">Select another photo</a>
+<br>
+<br>
+<a href="/home">GO back</a>
+<br>
+<br>
+<a href="/logout">Logout</a>
+
+</body>
+
+
+</html>

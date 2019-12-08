@@ -1,0 +1,47 @@
+<html>
+<head>
+</head>
+<body>
+
+
+Here are users who wanna follow you
+<br>
+
+
+<form action="/acceptFollow" method="GET">
+
+{% for line in user_list %}
+<input type="radio" name="follower" value={{line.username_follower}}>{{line.username_follower}}
+	<br>
+{% endfor %}
+
+<input type="submit" value="Accept">
+
+
+
+</form>
+
+<form action="/declineFollow" method="GET">
+
+{% for line in user_list %}
+<input type="radio" name="follower" value={{line.username_follower}}>{{line.username_follower}}
+	<br>
+{% endfor %}
+
+<input type="submit" value="Decline">
+
+
+
+</form>
+
+
+
+
+<a href="/home">Go back</a>
+
+<a href="/logout">Logout</a>
+
+</body>
+
+
+</html>

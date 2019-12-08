@@ -1,0 +1,31 @@
+<html>
+<head>
+</head>
+<body>
+
+
+Which group you want to add into new followers?
+<br>
+
+
+<form action="/showAddList" method="GET">
+
+{% for line in group_list %}
+<input type="radio" name="groupName" value={{line.groupName}}>{{line.groupName}}
+	<br>
+{% endfor %}
+
+<input type="submit" value="Confirm">
+
+</form>
+
+<a href="/home">Go back</a>
+
+
+
+<a href="/logout">Logout</a>
+
+</body>
+
+
+</html>

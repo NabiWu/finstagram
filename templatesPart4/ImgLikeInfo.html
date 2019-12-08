@@ -1,0 +1,31 @@
+<html>
+<head>
+</head>
+<body>
+
+
+Which photo you want to see the additional like infomation?
+<br>
+
+
+<form action="/getLikeInfo" method="GET">
+
+{% for line in photo_list %}
+<input type="radio" name="myPhotoID" value={{line.photoID}}>{{line.photoID}}</input>
+	<br>
+{% endfor %}
+
+<input type="submit" value="Confirm">
+
+</form>
+
+<a href="/home">Go back</a>
+
+
+
+<a href="/logout">Logout</a>
+
+</body>
+
+
+</html>

@@ -1,0 +1,40 @@
+<html>
+<head>
+</head>
+<body>
+
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+
+
+
+<form action="/startTag" method="GET">
+
+{% for line in userName %}
+	<input type="radio" name="taggedPerson" value={{line.username}}>{{line.username}}
+    <input type="text" name="photo" value={{line.photo}}>
+    <br>
+{% endfor %}
+
+<input type="submit" value="tag">
+
+</form>
+
+
+<br>
+<br>
+<a href="/tagOnMyImg">Select another photo</a>
+<br>
+<br>
+<a href="/home">Go back</a>
+<br>
+<br>
+<a href="/logout">Logout</a>
+
+</body>
+
+
+</html>

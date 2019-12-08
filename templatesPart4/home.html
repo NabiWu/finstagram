@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <title>Finstagram</title>
+    </head>
+    <body>
+        <h1>Hello, {{ username }}!</h1>
+        <div>
+            <ul>
+                <li><a href="/images">Make a Comment</a></li>
+                <li><a href="/readComment">Read Comment</a></li>
+                <li><a href="/additionalPicInfo">View More Image Info</a></li>
+                <li><a href="/manageGroup">Manage your group</a></li>
+                <li><a href="/upload">Upload an Image</a></li>
+                <li><a href="/friendGroup"> Create FriendGroup </a></li>
+                <li><a href="/likePhoto">like a photo</a></li>
+                <li><a href="/followUser">Follow user</a></li>
+                <li><a href="/followRequest">Follow request</a></li>
+                <li><a href="/tagOnMyImg">Tag friends</a></li>
+                <li><a href="/tagRequest">Tag request</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+
+        <table>
+            <tr>
+                <th> Owner of Photo </th>
+                <th> Owner's first name </th>
+                <th> Owner's last name </th>
+                <th> PhotoID </th>
+                <th> Timestamp </th>
+                <th> Photo </th>
+
+            </tr>
+            {% for item in posts %}
+            <tr>
+                <td> {{item.name}} </td>
+                <td> {{item.firstName}} </td>
+                <td> {{item.lastName}} </td>
+                <td>{{item.ID}}</td>
+                <td>{{item.ts}}</td>
+                <td>{{item.caption}}</td>
+                <!-- <td> <img style="max-height: 150px; max-width: 150px" src ="../static/insta.jpg"></td> -->
+                <!--<td> <img style="max-height: 150px; max-width: 150px" src ="../static/{{item.url}}"></td> -->
+                <td>{{item.filepath}}</td>
+                <td>{{item.tagPpl}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

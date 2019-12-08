@@ -1,0 +1,34 @@
+<html>
+<head>
+</head>
+<body>
+
+
+Here are users who wanna tag you in certain photo
+<br>
+<form action="/acceptTag" method="GET">
+{% for line in tag_list %}
+<input type="radio" name="photo" value={{line.photoID}}>{{line.photoID}}
+	<br>
+{% endfor %}
+<input type="submit" value="Accept">
+</form>
+
+
+<form action="/declineTag" method="GET">
+{% for line in tag_list %}
+<input type="radio" name="photo" value={{line.photoID}}>{{line.photoID}}
+	<br>
+{% endfor %}
+<input type="submit" value="Decline">
+</form>
+
+
+<br>
+<a href="/home">Go back</a>
+<a href="/logout">Logout</a>
+
+</body>
+
+
+</html>

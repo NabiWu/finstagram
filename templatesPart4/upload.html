@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title>Image Upload</title>
+    </head>
+    <body>
+        <h1>Upload an Image!</h1>
+        <div>
+            <form action="/uploadImage" method="post" enctype="multipart/form-data">
+                <input type="text" name="filePath" placeholder="filePath" required/>
+                <br/>
+                <input type="text" name="caption" placeholder="caption" required/>
+                <br/>
+                Insert 1 if all followers could see, 0 for not
+                <br>
+                <input type="text" name="allFollowers" placeholder="allFollowers">
+                <br/>
+                <br>
+                <br>
+                <br>
+                Please choose one of you friend group if you didn't check the above button
+                <br>
+
+                {% for line in group_list %}
+                <input type="radio" name="groupName" value={{line.groupName}}>{{line.groupName}}
+	            <br>
+                {% endfor %}
+
+
+                <input type="submit" value="Upload">
+            </form>
+        </div>
+        {% if message %}
+            {{ message }}
+        {% endif %}
+        <br/>
+        <a href="/">Go back</a>
+    </body>
+</html>

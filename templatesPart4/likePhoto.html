@@ -1,0 +1,38 @@
+<html>
+<head>
+</head>
+<body>
+
+Like Photo!
+<br>
+
+
+<form action="/chooseOneToLike" method="GET">
+
+{% for line in photo_list %}
+<input type="radio" name="id" value={{line.photoID}}>{{line.photoID}}
+	<br>
+{% endfor %}
+
+<input type="text" name="rate">{{ "Must Choosing: Rating -> (0-10)" }}
+
+<br>
+<input type="submit" value="Like">
+
+
+
+</form>
+
+
+
+
+
+
+<a href="/home">Go back</a>
+
+<a href="/logout">Logout</a>
+
+</body>
+
+
+</html>

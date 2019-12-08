@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>Image Upload</title>
+    </head>
+    <body>
+        <h1>ENTER THE USER NAME</h1>
+        <div>
+            <form action="/followUserAuth" method="post" enctype="multipart/form-data">
+                <input type="text" name="followee" placeholder="Username" required/>
+                <br/>
+
+            <input type="submit" value="Follow">
+            </form>
+        </div>
+        {% if error %}
+            {{ error }}
+        {% endif %}
+        <br/>
+
+        <a href="/home">Go back</a>
+        <a href="/logout">Logout</a>
+    </body>
+</html>

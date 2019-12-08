@@ -1,0 +1,46 @@
+<html>
+<head>
+</head>
+<body>
+
+
+Here are the tag information!
+<br>
+
+
+<table>
+            <tr>
+                <th> Username </th>
+                <th> FirstName </th>
+                <th> LastName </th>
+                <th> Tagstatus </th>
+
+            </tr>
+
+            {% for item in photo_list %}
+            <tr>
+                <td> {{item.username}} </td>
+                <td> {{item.firstName}} </td>
+                <td> {{item.lastName}} </td>
+                <td>{{item.tagstatus}}</td>
+
+            </tr>
+            {% endfor %}
+</table>
+
+
+
+
+
+
+
+<a href="/home">Go back</a>
+
+
+
+<a href="/logout">Logout</a>
+
+</body>
+
+
+</html>
